@@ -1,43 +1,37 @@
 import UrlRepository from "@/repositories/UrlRepository";
 import shortId from 'shortid';
-
-
 export class UrlShortenerService {
     private urlRepository;
     constructor() {
-        this.urlRepository=new UrlRepository();
+        this.urlRepository = new UrlRepository();
     }
-    
-    async shortenUrl (originalUrl :string) : Promise<string>{
-        let url= await this.urlRepository.getUrlByOriginalUrl(originalUrl);
-        if(url){
+
+    async shortenUrl(originalUrl?: string) : Promise<string> {
+        if(!originalUrl) {
+            return "";
+        }
+        let url = await this.urlRepository.getUrlByOriginalUrl(originalUrl);
+        if(url) {
             return url.shortUrl;
         }
-
-        let shortUrl=shortId();
+        let shortUrl = shortId();
         url = await this.urlRepository.getUrlByShortUrl(shortUrl);
-
         while(url) {
-            shortUrl=shortId();
-             url = await this.urlRepository.getUrlByShortUrl(shortUrl);
+            shortUrl = shortId();
+            url = await this.urlRepository.getUrlByShortUrl(shortUrl);
         }
 
-        await this.urlRepository.createUrl(originalUrl , shortUrl);
+        await this.urlRepository.createUrl(originalUrl, `urls/${shortUrl}`);
         return shortUrl;
     }
 
-    async getAllUrls(){
-        return this.urlRepository.getAllUrls();
+    async getAllUrls() {
+        return await this.urlRepository.getAllUrls();
     }
 
-    async getUrlByShortUrl(shortUrl :string){
+    async getUrlByShortUrl(shortUrl: string) {
         return await this.urlRepository.getUrlByShortUrl(shortUrl);
     }
-   
 
-    //more services [TODO]
-
-
-
-
-}
+    // [todo] add more 
+ }
