@@ -9,11 +9,3 @@ export async function POST(req : Request ) {
     return NextResponse.json({shortUrl});
 
 }
-
-export async function GET() {
-    const shortenerService = new UrlShortenerService();
-
-    const response = await shortenerService.getAllUrls();
-    return NextResponse.json({response});
-
-}
